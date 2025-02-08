@@ -3,52 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nadmons10 - AR Markerless</title>
+  <title>Nadmons10 - AR</title>
   <!-- Inclusion d'A-Frame -->
   <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-  <!-- Utilisation du mode AR via WebXR (sans AR.js, pour une expérience markerless) -->
-  <!-- Note : Certains navigateurs nécessitent que la page soit servie en HTTPS pour activer WebXR -->
+  <!-- Utilisation du mode AR markerless via WebXR -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- Compteur de score affiché en haut à gauche -->
   <div id="score">Score: 0</div>
-  
+
   <!-- Scène A-Frame en mode AR markerless -->
   <a-scene embedded xr="mode: ar; referenceSpaceType: local-floor">
-    <!-- 
-      Le modèle 3D : une boîte rouge.
-      Pour une boîte de hauteur 0.3, la position y=0.15 permet que sa base soit au niveau du sol.
-      La position z=-2 place l'objet devant la caméra.
-    -->
+    <!-- Un plan invisible pour référence (optionnel) -->
+    <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#000" opacity="0"></a-plane>
+    <!-- Modèle 3D : boîte rouge, positionnée pour être posée sur le sol -->
     <a-box id="model" position="0 0.15 -2" rotation="0 45 0" color="#ff0000" depth="0.3" height="0.3" width="0.3"></a-box>
-    
     <!-- Caméra AR -->
     <a-entity camera></a-entity>
   </a-scene>
-  
-  <!-- Lien pour revenir (optionnel) -->
+
+  <!-- Lien pour revenir à la carte (optionnel) -->
   <div class="back-link">
     <a href="index.html">Retour à la carte</a>
   </div>
-  
-  <!-- Script pour gérer le score et l'interaction -->
-  <script>
-    // Attendre que la scène soit complètement chargée
-    window.addEventListener('load', () => {
-      const scoreDiv = document.getElementById('score');
-      let score = 0;
-      const model = document.getElementById('model');
 
-      // On attache l'écouteur après un léger délai pour s'assurer que l'élément est disponible
-      setTimeout(() => {
-        if (model) {
-          model.addEventListener('click', () => {
-            score++;
-            scoreDiv.innerText = 'Score: ' + score;
-          });
-        }
-      }, 2000);
+  <!-- Script pour gérer l'incrément du score lors d'un clic sur le modèle -->
+  <script>
+    let score = 0;
+    const scoreDiv = document.getElementById('score');
+    const model = document.getElementById('model');
+
+    // Attendre que la scène soit chargée
+    window.addEventListener('load', () => {
+      // Attache l'événement "click" sur le modèle
+      model.addEventListener('click', () => {
+        score++;
+        scoreDiv.innerText = 'Score: ' + score;
+      });
     });
   </script>
 </body>
