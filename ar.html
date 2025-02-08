@@ -3,20 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nadomons10 - AR</title>
-  <!-- A-Frame pour l'AR -->
+  <title>Nadmons10 - AR</title>
+  <!-- Inclusion d'A-Frame -->
   <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-  <!-- AR.js (facultatif, pour activer AR via webcam) -->
+  <!-- Inclusion d'AR.js pour activer AR via webcam (optionnel) -->
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Compteur de score affiché en haut -->
+  <div id="score">Score: 0</div>
+
+  <!-- Scène A-Frame avec AR.js -->
   <a-scene embedded arjs="sourceType: webcam;">
-    <a-box position="0 0.5 -3" rotation="0 45 0" color="#ff0000"></a-box>
+    <!-- 
+      Plan invisible servant d'ancrage pour le sol. 
+      Nous utilisons opacity="0" afin qu'il soit présent pour le calcul des positions sans être visible.
+    -->
+    <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#000" opacity="0"></a-plane>
+
+    <!-- Le modèle 3D (une boîte rouge) positionnée de façon à être "posé" sur le sol.
+         Pour une boîte de hauteur 0.3, positionner y à 0.15 permet d'avoir son bas au niveau du sol. -->
+    <a-box id="model" position="0 0.15 -3" rotation="0 45 0" color="#ff0000" depth="0.3" height="0.3" width="0.3"></a-box>
+
+    <!-- Caméra -->
     <a-entity camera></a-entity>
   </a-scene>
+
+  <!-- Lien pour revenir à la page principale (optionnel) -->
   <div class="back-link">
     <a href="index.html">Retour à la carte</a>
   </div>
+
+  <!-- Script JavaScript pour gérer l'incrément du score -->
+  <script>
+    // Initialisation du score
+    let score = 0;
+    const scoreDiv = document.getElementById('score');
+
+    // Récupérer l'élément du modèle
+    const model = document.getElementById('model');
+
+    // Ajouter un écouteur d'événement "click" sur le modèle pour incrémenter le score
+    model.addEventListener('click', function () {
+      score += 1;
+      scoreDiv.innerText = 'Score: ' + score;
+    });
+  </script>
 </body>
 </html>
