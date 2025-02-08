@@ -3,25 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nadmons10 - AR</title>
+  <title>Nadmons10 - AR Markerless</title>
   <!-- Inclusion d'A-Frame -->
   <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-  <!-- Utilisation du mode AR markerless via WebXR -->
+  <!-- Activer WebXR AR markerless -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Compteur de score affiché en haut à gauche -->
+  <!-- Compteur de score -->
   <div id="score">Score: 0</div>
 
   <!-- Scène A-Frame en mode AR markerless -->
   <a-scene embedded xr="mode: ar; referenceSpaceType: local-floor">
-    <!-- Un plan invisible pour référence (optionnel) -->
+    <!-- Un plan invisible sert de référence pour le sol -->
     <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#000" opacity="0"></a-plane>
-    <!-- Modèle 3D : boîte rouge, positionnée pour être posée sur le sol -->
+    <!-- Modèle 3D interactif : boîte rouge posée sur le sol -->
     <a-box id="model" position="0 0.15 -2" rotation="0 45 0" color="#ff0000" depth="0.3" height="0.3" width="0.3"></a-box>
-    <!-- Caméra AR -->
-    <a-entity camera></a-entity>
+    <!-- Caméra AR avec un curseur pour permettre l'interaction -->
+    <a-entity camera look-controls>
+      <a-cursor fuse="true" timeout="500"></a-cursor>
+    </a-entity>
   </a-scene>
 
   <!-- Lien pour revenir à la carte (optionnel) -->
@@ -29,19 +31,15 @@
     <a href="index.html">Retour à la carte</a>
   </div>
 
-  <!-- Script pour gérer l'incrément du score lors d'un clic sur le modèle -->
   <script>
     let score = 0;
     const scoreDiv = document.getElementById('score');
     const model = document.getElementById('model');
 
-    // Attendre que la scène soit chargée
-    window.addEventListener('load', () => {
-      // Attache l'événement "click" sur le modèle
-      model.addEventListener('click', () => {
-        score++;
-        scoreDiv.innerText = 'Score: ' + score;
-      });
+    // Écouteur d'événement "click" sur le cube pour incrémenter le score
+    model.addEventListener('click', () => {
+      score++;
+      scoreDiv.innerText = 'Score: ' + score;
     });
   </script>
 </body>

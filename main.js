@@ -1,6 +1,6 @@
 // main.js
 
-// Fonction utilitaire pour calculer la distance entre deux points (formule de Haversine)
+// Fonction pour calculer la distance entre deux points (formule de Haversine)
 function getDistance(loc1, loc2) {
     const toRad = (value) => (value * Math.PI) / 180;
     const R = 6371000; // Rayon de la Terre en mètres
@@ -14,19 +14,18 @@ function getDistance(loc1, loc2) {
     return R * c;
   }
   
-  // Vérifier si la géolocalisation est supportée
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
       const userLocation = { latitude, longitude };
   
-      // Créer la carte avec Leaflet
+      // Initialisation de la carte avec Leaflet
       const map = L.map('map').setView([latitude, longitude], 15);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
   
-      // Créer un marqueur violet pour l'utilisateur
+      // Marqueur violet pour l'utilisateur
       const violetIcon = L.icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png',
         iconSize: [25, 41],
@@ -37,21 +36,21 @@ function getDistance(loc1, loc2) {
       const userMarker = L.marker([latitude, longitude], { icon: violetIcon }).addTo(map);
       userMarker.bindPopup("Vous êtes ici");
   
-      // Générer 5 POI aléatoires autour de l'utilisateur (distance entre 10 et 200 m)
+      // Génération de 5 POI aléatoires autour de l'utilisateur (entre 10 et 200 m)
       let pois = [];
       for (let i = 0; i < 5; i++) {
         const distance = Math.random() * (200 - 10) + 10;
         const angle = Math.random() * 2 * Math.PI;
         const dLat = (distance * Math.cos(angle)) / 111000;
-        const dLng = (distance * Math.sin(angle)) / (111000 * Math.cos(latitude * Math.PI / 180));
+        const dLon = (distance * Math.sin(angle)) / (111000 * Math.cos(latitude * Math.PI / 180));
         pois.push({
           id: i,
           latitude: latitude + dLat,
-          longitude: longitude + dLng
+          longitude: longitude + dLon
         });
       }
   
-      // Ajouter des marqueurs rouges pour les POI
+      // Marqueurs rouges pour les POI
       const redIcon = L.icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
         iconSize: [25, 41],
@@ -64,7 +63,7 @@ function getDistance(loc1, loc2) {
         marker.bindPopup("POI " + poi.id);
       });
   
-      // Simulation du déplacement de l'utilisateur vers le POI le plus proche
+      // Simulation : Déplacement de l'utilisateur vers le POI le plus proche
       let simulationRunning = true;
       const intervalId = setInterval(() => {
         if (!simulationRunning) return;
@@ -78,19 +77,17 @@ function getDistance(loc1, loc2) {
           }
         });
         if (!nearestPOI) return;
-        // Lorsque la distance est inférieure à 5 m, arrêter la simulation et rediriger vers la page AR
+        // Si la distance est inférieure à 5 m, arrêter la simulation et rediriger vers la page AR
         if (minDistance < 5) {
           clearInterval(intervalId);
           simulationRunning = false;
           window.location.href = "ar.html";
           return;
         }
-        // Simuler le déplacement vers le POI le plus proche
-        const speed = 11.11; // m/s (environ 40 km/h)
+        const speed = 11.11; // m/s, environ 40 km/h
         const fraction = speed / minDistance;
         userLocation.latitude += (nearestPOI.latitude - userLocation.latitude) * fraction;
         userLocation.longitude += (nearestPOI.longitude - userLocation.longitude) * fraction;
-        // Mettre à jour le marqueur utilisateur et recentrer la carte
         userMarker.setLatLng([userLocation.latitude, userLocation.longitude]);
         map.setView([userLocation.latitude, userLocation.longitude]);
       }, 1000);
